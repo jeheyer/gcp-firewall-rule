@@ -24,9 +24,15 @@ variable "description" {
   type    = string
   default = "Created by Terraform"
 }
+variable "network_name" {
+  description = "Name of the VPC network rule applies to"
+  type        = string
+  default     = null
+}
 variable "network" {
   description = "Name of the VPC network rule applies to"
   type        = string
+  default     = null
 }
 variable "priority" {
   description = "Priority Number (lower number is higher priority)"
@@ -62,8 +68,13 @@ variable "protocol" {
   default     = null
 }
 variable "protocols" {
-  description = "Network Protocols (tcp, udp, icmp, esp, gre, etc)"
+  description = "Network Protocols (plural).  Example: [\"tcp\", \"udp\"]"
   type        = list(string)
+  default     = null
+}
+variable "port" {
+  description = "TCP or UDP Port to allow or deny"
+  type        = number
   default     = null
 }
 variable "ports" {
@@ -115,4 +126,9 @@ variable "deny" {
     ports    = list(string)
   }))
   default = null
+}
+variable "enforcement" {
+  description = "Whether to actually enforce this rule"
+  type = bool
+  default = true
 }

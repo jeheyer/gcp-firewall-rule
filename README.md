@@ -1,5 +1,9 @@
 # Management of a Google Cloud Platform Firewall Rule
 
+## Relevant Resources
+
+- [google_compute_firewall](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_firewall)
+
 ## Inputs 
 
 ### Required Inputs
@@ -7,24 +11,38 @@
 | Name | Description | Type |
 |------|-------------|------|
 | project\_id | Project id of the project that holds the network | `string` | 
-| network | Name of the network this set of firewall rules applies to | `string` |
+
+### Recommend Inputs
+
+| Name | Description | Type |
+|------|-------------|------|
+| network_name | Name of the network this set of firewall rules applies to | `string` |
 
 ### Optional Inputs
 
-| Name | Description | Type | Default |
-|------|-------------|------|---------|
-| name | Explicit ame for this resource | `string` | n/a |
-| name_prefix | Name prefix for auto-generated name | `string` | n/a |
-| description | Description for this resource | `string` | n/a |
-| logging | Whether to enable logging for rule hits | `bool` | false | 
-| priority | Priority number (lower number is higher priority) | `number` | 1000 |
-| direction | Direction of trafic (ingress or egress) | `string` | "INGRESS" |
-| action | Whether to allow or deny traffic | `string` | "ALLOW" |
-| ranges | IP Ranges for this rule | `list(string)` | ["127.0.0.1"] |
-| ports | List (defaults to TCP only unless protocol or protocols specified ) | `list(number)` | n/a |
-| protocol | IP Protocol for this rule (tcp, udp, icmp, etc) | `string` | n/a |
-| protocols | IP Protocols for this rule (tcp, udp, icmp, etc) | `list(string)` | n/a |
-| enforcement | Whether to actually enable this rule or just log traffic | `bool` | true |
+| Name | Description                                                                           | Type | Default |
+|------|---------------------------------------------------------------------------------------|------|---------|
+| name | Explicit name for this resource                                                       | `string` | n/a |
+| name_prefix | Name prefix for auto-generated name                                                   | `string` | n/a |
+| description | Description for this resource                                                         | `string` | n/a |
+| logging | Whether to enable logging for rule hits                                               | `bool` | false | 
+| priority | Priority number (lower number is higher priority)                                     | `number` | 1000 |
+| direction | Direction of trafic (ingress or egress)                                               | `string` | "INGRESS" |
+| action | Whether to allow or deny traffic                                                      | `string` | "ALLOW" |
+| ranges | IP Ranges for this rule                                                               | `list(string)` | ["127.0.0.1"] |
+| ports | List of TCP/UDP Ports (defaults to TCP only, unless protocol or protocols specified ) | `list(number)` | n/a |
+| port | Single TCP/UDP Port (defaults to TCP only, unless protocol or protocols specified )   | `number` | n/a |
+| protocol | IP Protocol for this rule (tcp, udp, icmp, etc)                                       | `string` | n/a |
+| protocols | IP Protocols for this rule (tcp, udp, icmp, etc)                                      | `list(string)` | n/a |
+| enforcement | Whether to actually enable this rule or just log traffic                              | `bool` | true |
+| network | Simply an alias for `var.network_name`                                                | `string` | n/a |
+
+#### Notes
+
+- `ports` (plural) will override `port` (singular)
+- `protocols` (plural) will override `protocol` (singular)
+- `network_name` will override `network`
+- If neither `network_name` nor `network `are specified, default network name is "default"
 
 ## Outputs
 

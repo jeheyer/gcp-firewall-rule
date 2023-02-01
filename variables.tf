@@ -20,6 +20,15 @@ variable "name_prefix" {
     error_message = "Name prefix cannot exceed 50 characters."
   }
 }
+variable "short_name" {
+  description = "Short name for this rule.  Rule name will be var.name_prefix + var.short_name"
+  type        = string
+  default     = null
+  validation {
+    condition     = var.short_name != null ? length(var.short_name) <= 20 : true
+    error_message = "Short name cannot exceed 20 characters."
+  }
+}
 variable "description" {
   type    = string
   default = "Created by Terraform"
@@ -81,6 +90,11 @@ variable "ports" {
   description = "TCP Ports to allow or deny"
   type        = list(string)
   default     = null
+  validation {
+    condition     = var.ports != null ? length(var.ports) > 0 : true
+    error_message = "If specified, ports list should contain at least one valid port."
+  }
+
 }
 variable "source_tags" {
   description = "Source Network Tags to match (ingress only)"
@@ -112,7 +126,7 @@ variable "action" {
   }
 }
 variable "allow" {
-  description = "List of protcols and ports (if applicable) to allow"
+  description = "List of protocols and ports (if applicable) to allow"
   type = list(object({
     protocol = string
     ports    = list(string)
@@ -120,7 +134,7 @@ variable "allow" {
   default = null
 }
 variable "deny" {
-  description = "List of protcols and ports (if applicable) to deny"
+  description = "List of protocols and ports (if applicable) to deny"
   type = list(object({
     protocol = string
     ports    = list(string)
@@ -129,6 +143,12 @@ variable "deny" {
 }
 variable "enforcement" {
   description = "Whether to actually enforce this rule"
-  type = bool
-  default = true
+  type        = bool
+  default     = true
 }
+variable "disabled" {
+  description = "Whether to actually enforce this rule"
+  type        = bool
+  default     = false
+}
+

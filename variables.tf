@@ -25,8 +25,8 @@ variable "short_name" {
   type        = string
   default     = null
   validation {
-    condition     = var.short_name != null ? length(var.short_name) <= 20 : true
-    error_message = "Short name cannot exceed 20 characters."
+    condition     = var.short_name != null ? length(var.short_name) <= 32 : true
+    error_message = "Short name cannot exceed 32 characters."
   }
 }
 variable "description" {
@@ -69,7 +69,7 @@ variable "direction" {
 variable "ranges" {
   description = "IP Ranges for this Rule"
   type        = list(string)
-  default     = ["127.0.0.1"]
+  default     = null
 }
 variable "protocol" {
   description = "Network Protocol (tcp, udp, icmp, esp, gre, etc)"

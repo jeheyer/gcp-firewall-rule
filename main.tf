@@ -25,8 +25,11 @@ locals {
     substr(lower(local.action), 0, 1),
     local.ports != null ? join("-", slice(local.ports, 0, length(local.ports) == 1 ? 1 : 2)) : "allports", # only use first two ports to keep string size small
   ]
+  #ranges = local.direction == "INGRESS" ? coalesce(var.ranges, ["169.254.169.254"])
+  #source_type = var.source_service_accounts != null ? "sas" : (var.source_tags != null ? "tags" : "ranges") 
   name_prefix = lower(coalesce(var.name_prefix, "fwr-${join("-", local.rule_description_fields)}"))
   disabled    = !var.enforcement ? true : coalesce(var.disabled, false)
+  ranges      = local.direction == "INGRESS" && var.source_service_accounts == null && var.source_tags == null && var.ranges == null ? ["169.254.169.254"] : null
 }
 
 resource "random_string" "short_name" {
@@ -43,10 +46,11 @@ resource "google_compute_firewall" "default" {
   network                 = local.network_link
   priority                = local.priority
   direction               = local.direction
-  source_ranges           = local.direction == "INGRESS" ? var.ranges : null
+  disabled                = local.disabled
+  source_ranges           = [] # null #["1.2.3.4"] #local.direction == "INGRESS" ? try(coalesce(var.ranges, local.ranges), ["127.0.0.1"]) : null
   source_tags             = local.direction == "INGRESS" ? var.source_tags : null
   source_service_accounts = local.direction == "INGRESS" ? var.source_service_accounts : null
-  disabled                = local.disabled
+  destination_ranges      = local.direction == "EGRESS" ? var.ranges : null
   dynamic "allow" {
     for_each = var.allow != null ? var.allow : local.action == "ALLOW" ? local.traffic : []
     content {
@@ -67,7 +71,6 @@ resource "google_compute_firewall" "default" {
       metadata = "INCLUDE_ALL_METADATA"
     }
   }
-  destination_ranges      = local.direction == "EGRESS" ? var.ranges : null
   target_tags             = local.target_tags
   target_service_accounts = local.target_sas
 }
